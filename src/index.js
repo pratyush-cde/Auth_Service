@@ -4,7 +4,8 @@ const app = express();
 const apiRoutes = require("./routes/index");
 const bodyParser = require("body-parser");
 
-const UserRepository = require("./repository/user-repository");
+const UserService = require("./services/user-service");
+
 const prepareAndStartServer = () => {
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,9 +14,19 @@ const prepareAndStartServer = () => {
 
   app.listen(PORT, async () => {
     console.log(`server started at PORT: ${PORT}`);
-    const repo = new UserRepository();
-    const response = await repo.getById(5);
-    console.log(response);
+
+    const service = new UserService();
+
+    const token = service.createToken({
+      email: "this@fullu.com",
+      id: "1",
+    });
+
+    console.log("Token:", token);
+
+    const response = service.verifyToken(token);
+
+    console.log("Decoded:", response);
   });
 };
 
