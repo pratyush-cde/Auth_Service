@@ -14,19 +14,6 @@ const prepareAndStartServer = () => {
 
   app.listen(PORT, async () => {
     console.log(`server started at PORT: ${PORT}`);
-
-    const service = new UserService();
-
-    const token = service.createToken({
-      email: "this@fullu.com",
-      id: "1",
-    });
-
-    console.log("Token:", token);
-
-    const response = service.verifyToken(token);
-
-    console.log("Decoded:", response);
   });
 };
 
