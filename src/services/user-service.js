@@ -2,6 +2,8 @@ const UserRepository = require("../repository/user-repository");
 const jwt = require("jsonwebtoken");
 const { JWT_KEY } = require("../config/serverConfig");
 const bcrypt = require("bcrypt");
+const { User, Role } = require("../models/index");
+const { where } = require("sequelize");
 
 class UserService {
   constructor() {
@@ -90,6 +92,15 @@ class UserService {
   checkPassword(userInputPlainPassword, encryptedPassword) {
     try {
       return bcrypt.compareSync(userInputPlainPassword, encryptedPassword);
+    } catch (error) {
+      console.log("Something went wrong at service layer");
+      throw { error };
+    }
+  }
+
+  async isAdmin(userId) {
+    try {
+      return this.userRepository.isAdmin(userId);
     } catch (error) {
       console.log("Something went wrong at service layer");
       throw { error };
