@@ -1,6 +1,8 @@
 const { where } = require("sequelize");
 const { User, Role } = require("../models/index");
 const { ValidationError } = require("../utils/validation-error");
+const { ClientError } = require("../utils/client-error");
+const { StatusCodes } = require("http-status-codes");
 
 class UserRepository {
   async create(data) {
@@ -12,7 +14,7 @@ class UserRepository {
         throw new ValidationError(error);
       }
       console.log("Something went wrong in user Repo");
-      throw { error };
+      throw error;
     }
   }
 
@@ -25,8 +27,9 @@ class UserRepository {
       });
       return true;
     } catch (error) {
+      // console.log(error);
       console.log("Something went wrong in user Repo");
-      throw { error };
+      throw error;
     }
   }
 
@@ -38,7 +41,7 @@ class UserRepository {
       return user;
     } catch (error) {
       console.log("Something went wrong in user Repo");
-      throw { error };
+      throw error;
     }
   }
 
@@ -49,10 +52,18 @@ class UserRepository {
           email: email,
         },
       });
+      if (!user) {
+        throw new ClientError(
+          "AttributeNotFound",
+          "invalid email sent",
+          "please check email",
+          StatusCodes.NOT_FOUND,
+        );
+      }
       return user;
     } catch (error) {
       console.log("Something went wrong in user Repo");
-      throw { error };
+      throw error;
     }
   }
 
@@ -67,7 +78,7 @@ class UserRepository {
       return user.hasRole(admin);
     } catch (error) {
       console.log("Something went wrong at repository layer");
-      throw { error };
+      throw error;
     }
   }
 }
